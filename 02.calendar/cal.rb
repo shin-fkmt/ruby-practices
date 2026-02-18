@@ -3,31 +3,22 @@
 require 'optparse'
 require 'date'
 
-year = Date.today.year
-month = Date.today.month
-
 params = {}
 opt = OptionParser.new
 opt.on('-y [VAL]', OptionParser::DecimalInteger) {|v| params[:y] = v }
 opt.on('-m [VAL]', OptionParser::DecimalInteger) {|v| params[:m] = v }
 opt.parse!(ARGV)
 
-if !params[:y].nil?
-  if (1970..2100).include?(params[:y])
-    year = params[:y]
-  else
-    puts "year `#{params[:y]}' not in range 1970..2100"
-    exit
-  end
+year = params[:y] ? params[:y] : Date.today.year
+unless (1970..2100).include?(year)
+  puts "year `#{year}' not in range 1970..2100"
+  exit
 end
 
-if !params[:m].nil?
-  if (1..12).include?(params[:m])
-    month = params[:m]
-  else
-    puts "month `#{params[:m]}' not in range 1..12"
-    exit
-  end
+month = params[:m] ? params[:m] : Date.today.month
+unless (1..12).include?(month)
+  puts "month `#{month}' not in range 1..12"
+  exit
 end
 
 calendar = Array.new
