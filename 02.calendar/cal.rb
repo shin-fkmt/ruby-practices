@@ -35,12 +35,10 @@ calendar = Array.new
 one_week_template = {:Sun => '  ', :Mon => '  ', :Tue => '  ', :Wed => '  ', :Thu => '  ', :Fri => '  ', :Sat => '  '}
 one_week = one_week_template.dup
 
-last_day = Date.new(year, month, -1).day
-(1..last_day).each do |day|
-  date = Date.new(year, month, day)
-  one_week[date.strftime('%a').to_sym] = day.to_s.rjust(2, ' ')
+(Date.new(year, month, 1)..Date.new(year, month, -1)).each do |date|
+  one_week[date.strftime('%a').to_sym] = date.day.to_s.rjust(2, ' ')
 
-  if date.saturday? || day == last_day
+  if date.saturday? || date == Date.new(year, month, -1)
     calendar.push(one_week.values)
     one_week = one_week_template.dup
   end
