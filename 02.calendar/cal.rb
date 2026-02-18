@@ -17,7 +17,7 @@ if !params[:y].nil?
     year = params[:y].to_i
   else
     puts "year `#{params[:y]}' not in range 1970..2100"
-    return
+    exit
   end
 end
 
@@ -26,7 +26,7 @@ if !params[:m].nil?
     month = params[:m].to_i
   else
     puts "month `#{params[:m]}' not in range 1..12"
-    return
+    exit
   end
 end
 
