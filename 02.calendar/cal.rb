@@ -23,7 +23,7 @@ end
 
 calendar = Array.new
 
-one_week_template = {:Sun => '  ', :Mon => '  ', :Tue => '  ', :Wed => '  ', :Thu => '  ', :Fri => '  ', :Sat => '  '}
+one_week_template = {Sun: '  ', Mon: '  ', Tue: '  ', Wed: '  ', Thu: '  ', Fri: '  ', Sat: '  '}
 one_week = one_week_template.dup
 
 (Date.new(year, month, 1)..Date.new(year, month, -1)).each do |date|
