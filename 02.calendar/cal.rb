@@ -8,13 +8,13 @@ month = Date.today.month
 
 params = {}
 opt = OptionParser.new
-opt.on('-y [VAL]') {|v| params[:y] = v }
-opt.on('-m [VAL]') {|v| params[:m] = v }
+opt.on('-y [VAL]', OptionParser::DecimalInteger) {|v| params[:y] = v }
+opt.on('-m [VAL]', OptionParser::DecimalInteger) {|v| params[:m] = v }
 opt.parse!(ARGV)
 
 if !params[:y].nil?
-  if params[:y].to_i.between?(1970, 2100)
-    year = params[:y].to_i
+  if params[:y].between?(1970, 2100)
+    year = params[:y]
   else
     puts "year `#{params[:y]}' not in range 1970..2100"
     exit
@@ -22,8 +22,8 @@ if !params[:y].nil?
 end
 
 if !params[:m].nil?
-  if params[:m].to_i.between?(1, 12)
-    month = params[:m].to_i
+  if params[:m].between?(1, 12)
+    month = params[:m]
   else
     puts "month `#{params[:m]}' not in range 1..12"
     exit
