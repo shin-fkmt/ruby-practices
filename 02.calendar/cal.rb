@@ -13,7 +13,7 @@ opt.on('-m [VAL]', OptionParser::DecimalInteger) {|v| params[:m] = v }
 opt.parse!(ARGV)
 
 if !params[:y].nil?
-  if params[:y].between?(1970, 2100)
+  if (1970..2100).include?(params[:y])
     year = params[:y]
   else
     puts "year `#{params[:y]}' not in range 1970..2100"
@@ -22,7 +22,7 @@ if !params[:y].nil?
 end
 
 if !params[:m].nil?
-  if params[:m].between?(1, 12)
+  if (1..12).include?(params[:m])
     month = params[:m]
   else
     puts "month `#{params[:m]}' not in range 1..12"
