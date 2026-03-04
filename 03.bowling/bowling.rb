@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 frames = ARGV[0]
-         .gsub(/X/, '10,0')
+         .gsub('X', '10,0')
          .split(',')
          .map(&:to_i)
          .each_slice(2)
