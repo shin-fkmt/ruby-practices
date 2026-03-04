@@ -1,7 +1,12 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-frames = ARGV[0].gsub(/X/, '10,0').split(',').map(&:to_i).each_slice(2).to_a
+frames = ARGV[0]
+         .gsub(/X/, '10,0')
+         .split(',')
+         .map(&:to_i)
+         .each_slice(2)
+         .to_a
 
 point = (0..frames.size - 1).sum do |i|
   current_frame = frames[i]
