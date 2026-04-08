@@ -27,7 +27,7 @@ class Ls
                        .each_slice(row_count)
                        .to_a
                        .each do |rows|
-                         max_char_size = rows.max { |a, b| a.size <=> b.size }.size
+                         max_char_size = rows.map(&:size).max
                          rows.each_with_index do |row, i|
                            @output_text[i] ||= []
                            @output_text[i] << row.ljust(max_char_size)
