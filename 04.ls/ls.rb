@@ -15,8 +15,7 @@ class Ls
   private
 
   def retrieve_directory_contents
-    @directory_contents = Dir.children(Dir.pwd)
-                             .filter { _1[0] != '.' }
+    @directory_contents = Dir.children(Dir.pwd).filter { _1[0] != '.' }
   end
 
   def sort_contents_for_ls_command
