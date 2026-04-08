@@ -7,36 +7,38 @@ class Ls
   end
 
   def main
-    retrieve_directory_contents
-    sort_contents_for_ls_command
-    output
+    directory_contents = retrieve_directory_contents
+    output_text = sort_contents_for_ls_command(directory_contents)
+    output(output_text)
   end
 
   private
 
   def retrieve_directory_contents
-    @directory_contents = Dir.children(Dir.pwd).filter { _1[0] != '.' }
+    Dir.children(Dir.pwd).filter { _1[0] != '.' }
   end
 
-  def sort_contents_for_ls_command
-    @output_text = []
-    row_count = @directory_contents.size / @max_col_size
-    row_count += 1 unless (@directory_contents.size % @max_col_size).zero?
+  def sort_contents_for_ls_command(directory_contents)
+    output_text = []
+    row_count = directory_contents.size / @max_col_size
+    row_count += 1 unless (directory_contents.size % @max_col_size).zero?
 
-    @directory_contents.sort
-                       .each_slice(row_count)
-                       .to_a
-                       .each do |rows|
-                         max_char_size = rows.map(&:size).max
-                         rows.each_with_index do |row, i|
-                           @output_text[i] ||= []
-                           @output_text[i] << row.ljust(max_char_size)
-                         end
-                       end
+    directory_contents.sort
+                      .each_slice(row_count)
+                      .to_a
+                      .each do |rows|
+                        max_char_size = rows.map(&:size).max
+                        rows.each_with_index do |row, i|
+                          output_text[i] ||= []
+                          output_text[i] << row.ljust(max_char_size)
+                        end
+                      end
+
+    output_text
   end
 
-  def output
-    @output_text.each { |line| puts line.join('  ') }
+  def output(output_text)
+    output_text.each { |line| puts line.join('  ') }
   end
 end
 
