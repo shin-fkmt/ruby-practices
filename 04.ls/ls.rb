@@ -1,21 +1,34 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require 'optparse'
+
 class Ls
   def initialize(max_col_size = 3)
     @max_col_size = max_col_size
   end
 
   def main
-    directory_contents = retrieve_directory_contents
+    file_name_match_flag = parse_options_for_file_name_match_flag
+    directory_contents = retrieve_directory_contents(file_name_match_flag)
     output_text = sort_contents_for_ls_command(directory_contents)
     output(output_text)
   end
 
   private
 
-  def retrieve_directory_contents
-    Dir.children(Dir.pwd).filter { _1[0] != '.' }
+  def parse_options_for_file_name_match_flag
+    file_name_match_flag = 0
+
+    opt = OptionParser.new
+    opt.on('-a') { |v| file_name_match_flag = File::FNM_DOTMATCH if v }
+    opt.parse!(ARGV)
+
+    file_name_match_flag
+  end
+
+  def retrieve_directory_contents(file_name_match_flag)
+    Dir.glob('*', file_name_match_flag)
   end
 
   def sort_contents_for_ls_command(directory_contents)
