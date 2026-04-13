@@ -10,7 +10,7 @@ class Ls
 
   def main
     directory_contents = retrieve_directory_contents
-    output_text = sort_contents_for_ls_command(directory_contents)
+    output_text = sort_by_column_groups(directory_contents)
     output(output_text)
   end
 
@@ -27,7 +27,7 @@ class Ls
     params[:r] ? directory_contents.reverse : directory_contents
   end
 
-  def sort_contents_for_ls_command(directory_contents)
+  def sort_by_column_groups(directory_contents)
     output_text = []
     row_count = directory_contents.size / @max_col_size
     row_count += 1 unless (directory_contents.size % @max_col_size).zero?
