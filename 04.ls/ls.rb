@@ -17,15 +17,20 @@ class Ls
   private
 
   def retrieve_directory_contents
-    Dir.glob('*')
+    directory_contents = Dir.glob('*')
+
+    params = {}
+    opt = OptionParser.new
+    opt.on('-r')
+    opt.parse!(ARGV, into: params)
+
+    params[:r] ? directory_contents.reverse : directory_contents
   end
 
   def sort_contents_for_ls_command(directory_contents)
     output_text = []
     row_count = directory_contents.size / @max_col_size
     row_count += 1 unless (directory_contents.size % @max_col_size).zero?
-
-    sort_contents(directory_contents)
 
     directory_contents.each_slice(row_count)
                       .to_a
@@ -38,20 +43,6 @@ class Ls
                       end
 
     output_text
-  end
-
-  def sort_contents(directory_contents)
-    params = {}
-
-    opt = OptionParser.new
-    opt.on('-r')
-    opt.parse!(ARGV, into: params)
-
-    if params[:r]
-      directory_contents.reverse!
-    else
-      directory_contents.sort!
-    end
   end
 
   def output(output_text)
