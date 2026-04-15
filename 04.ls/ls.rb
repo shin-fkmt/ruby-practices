@@ -9,35 +9,30 @@ class Ls
   end
 
   def main
-    file_name_match_flag = parse_options_for_file_name_match_flag
-    directory_contents = retrieve_directory_contents(file_name_match_flag)
-    output_text = sort_contents_for_ls_command(directory_contents)
+    directory_contents = retrieve_directory_contents
+    output_text = sort_by_column_groups(directory_contents)
     output(output_text)
   end
 
   private
 
-  def parse_options_for_file_name_match_flag
-    file_name_match_flag = 0
+  def retrieve_directory_contents
+    directory_contents = Dir.glob('*')
 
+    params = {}
     opt = OptionParser.new
-    opt.on('-a') { |v| file_name_match_flag = File::FNM_DOTMATCH if v }
-    opt.parse!(ARGV)
+    opt.on('-r')
+    opt.parse!(ARGV, into: params)
 
-    file_name_match_flag
+    params[:r] ? directory_contents.reverse : directory_contents
   end
 
-  def retrieve_directory_contents(file_name_match_flag)
-    Dir.glob('*', file_name_match_flag)
-  end
-
-  def sort_contents_for_ls_command(directory_contents)
+  def sort_by_column_groups(directory_contents)
     output_text = []
     row_count = directory_contents.size / @max_col_size
     row_count += 1 unless (directory_contents.size % @max_col_size).zero?
 
-    directory_contents.sort
-                      .each_slice(row_count)
+    directory_contents.each_slice(row_count)
                       .to_a
                       .each do |rows|
                         max_char_size = rows.map(&:size).max
