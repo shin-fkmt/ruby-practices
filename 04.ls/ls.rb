@@ -51,7 +51,7 @@ class Ls
       detail_content
     end
 
-    ajust_char_length(detail_contents).map { _1.join(' ') }.unshift "合計 #{block_size}"
+    adjust_char_length(detail_contents).map { _1.join(' ') }.unshift "合計 #{block_size}"
   end
 
   def convert_to_content_size(file_lstat)
@@ -78,7 +78,7 @@ class Ls
     end
   end
 
-  def ajust_char_length(detail_contents)
+  def adjust_char_length(detail_contents)
     max_link_count_length = detail_contents.map { _1[1].size }.max
     detail_contents.each { _1[1] = _1[1].rjust(max_link_count_length) }
 
