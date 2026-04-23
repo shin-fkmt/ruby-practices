@@ -15,7 +15,9 @@ class Ls
   def initialize(max_col_size = 3)
     @options = {}
     opt = OptionParser.new
+    opt.on('-a')
     opt.on('-l')
+    opt.on('-r')
     opt.parse!(ARGV, into: @options)
     @max_col_size = @options[:l] ? 1 : max_col_size
   end
@@ -30,7 +32,9 @@ class Ls
   private
 
   def retrieve_directory_contents
-    Dir.glob('*')
+    file_name_match_flag = @options[:a] ? File::FNM_DOTMATCH : 0
+    directory_contents = Dir.glob('*', file_name_match_flag)
+    @options[:r] ? directory_contents.reverse : directory_contents
   end
 
   def add_detail_contents(directory_contents)
@@ -51,7 +55,7 @@ class Ls
       detail_content
     end
 
-    ajust_char_length(detail_contents).map { _1.join(' ') }.unshift "合計 #{block_size}"
+    adjust_char_length(detail_contents).map { _1.join(' ') }.unshift "合計 #{block_size}"
   end
 
   def convert_to_content_size(file_lstat)
@@ -78,7 +82,7 @@ class Ls
     end
   end
 
-  def ajust_char_length(detail_contents)
+  def adjust_char_length(detail_contents)
     max_link_count_length = detail_contents.map { _1[1].size }.max
     detail_contents.each { _1[1] = _1[1].rjust(max_link_count_length) }
 
