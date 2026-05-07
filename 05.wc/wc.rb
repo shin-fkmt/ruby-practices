@@ -5,7 +5,7 @@ require 'optparse'
 
 def main
   options = parse_options
-  is_stdin = ARGF.file.instance_of?(IO)
+  is_stdin = ARGV.empty?
   file_details = is_stdin ? parse_io_input : parse_file_input
   added_total_file_details = add_total_line(file_details) if file_details.size > 1
   adjusted_file_details = adjust_char_length(added_total_file_details || file_details, options, is_stdin)
