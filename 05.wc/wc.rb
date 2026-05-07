@@ -77,7 +77,8 @@ def add_total_line(file_details)
   total_word_count = file_details.flat_map { _1.values_at(:word_count) }.sum
   total_byte_count = file_details.flat_map { _1.values_at(:byte_count) }.sum
 
-  file_details << create_file_detail(total_line_count, total_word_count, total_byte_count, '合計', false)
+  added_total_file_details = Marshal.load(Marshal.dump(file_details))
+  added_total_file_details << create_file_detail(total_line_count, total_word_count, total_byte_count, '合計', false)
 end
 
 def adjust_char_length(file_details, options, is_stdin)
@@ -85,7 +86,8 @@ def adjust_char_length(file_details, options, is_stdin)
   max_length = file_details.flat_map { _1.values_at(*selectors) }.map { _1.to_s.length }.max
   max_length = 7 if max_length < 7 && (file_details.any? { _1[:directory] } || (is_stdin && options.values_at(*%i[l w c]).count(true) > 1))
 
-  file_details.each do |detail|
+  adjusted_file_details = Marshal.load(Marshal.dump(file_details))
+  adjusted_file_details.each do |detail|
     detail[:line_count] = detail[:line_count].to_s.rjust(max_length)
     detail[:word_count] = detail[:word_count].to_s.rjust(max_length)
     detail[:byte_count] = detail[:byte_count].to_s.rjust(max_length)
