@@ -5,10 +5,10 @@ require 'optparse'
 
 def main
   options = parse_options
-  stdin = ARGF.file.instance_of?(IO)
-  file_details = stdin ? parse_io_input : parse_file_input
+  is_stdin = ARGF.file.instance_of?(IO)
+  file_details = is_stdin ? parse_io_input : parse_file_input
   added_total_file_details = add_total_line(file_details) if file_details.size > 1
-  adjusted_file_details = adjust_char_length(added_total_file_details || file_details, options, stdin)
+  adjusted_file_details = adjust_char_length(added_total_file_details || file_details, options, is_stdin)
   output_lines = create_output_lines(adjusted_file_details, options)
   output(output_lines)
 end
@@ -80,10 +80,10 @@ def add_total_line(file_details)
   file_details << create_file_detail(total_line_count, total_word_count, total_byte_count, '合計', false)
 end
 
-def adjust_char_length(file_details, options, stdin)
+def adjust_char_length(file_details, options, is_stdin)
   selectors = create_char_length_selectors(file_details, options)
   max_length = file_details.flat_map { _1.values_at(*selectors) }.map { _1.to_s.length }.max
-  max_length = 7 if max_length < 7 && (file_details.any? { _1[:directory] } || (stdin && options.values_at(*%i[l w c]).count(true) > 1))
+  max_length = 7 if max_length < 7 && (file_details.any? { _1[:directory] } || (is_stdin && options.values_at(*%i[l w c]).count(true) > 1))
 
   file_details.each do |detail|
     detail[:line_count] = detail[:line_count].to_s.rjust(max_length)
