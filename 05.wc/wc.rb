@@ -24,6 +24,34 @@ def parse_options
   options
 end
 
+def parse_io_input
+  buf = ARGF.read
+  return [create_file_detail(0, 0, 0, '', false)] if buf.empty?
+
+  counts = calculate_count(buf)
+  [create_file_detail(counts[:line_count], counts[:word_count], counts[:byte_count], '', false)]
+end
+
+def parse_file_input
+  file_details = []
+  ARGV.each do |filename|
+    next unless File.exist?(filename)
+
+    if File.directory?(filename) || File.empty?(filename)
+      file_details << create_file_detail(0, 0, 0, filename, File.directory?(filename))
+      next
+    end
+
+    counts = calculate_count(File.read(filename))
+    file_details << create_file_detail(counts[:line_count], counts[:word_count], counts[:byte_count], filename, false)
+  end
+  file_details
+end
+
+def calculate_count(buf)
+  { line_count: buf.count("\n"), word_count: buf.split(' ').count, byte_count: buf.bytesize }
+end
+
 def create_file_detail(line_count, word_count, byte_count, file_name, directory)
   {
     line_count: line_count,
@@ -32,44 +60,6 @@ def create_file_detail(line_count, word_count, byte_count, file_name, directory)
     file_name: file_name,
     directory: directory
   }
-end
-
-def parse_io_input
-  lines = ARGF.readlines
-  return [create_file_detail(0, 0, 0, '', false)] if lines.empty?
-
-  line_count = word_count = byte_count = 0
-  lines.each do |line|
-    line_count += 1
-    word_count += line.split(' ').size
-    byte_count += line.bytesize
-  end
-
-  [create_file_detail(line_count, word_count, byte_count, '', false)]
-end
-
-def parse_file_input
-  file_details = []
-  loop do
-    break if ARGF.closed?
-
-    if File.directory?(ARGF.file) || File.empty?(ARGF.filename)
-      file_details << create_file_detail(0, 0, 0, ARGF.filename, File.directory?(ARGF.file))
-      ARGF.close
-      next
-    end
-
-    line_count = word_count = byte_count = 0
-    ARGF.each do |line|
-      line_count += 1 if line[-1] == "\n"
-      word_count += line.split(' ').size
-      byte_count += line.bytesize
-      break if ARGF.eof?
-    end
-    file_details << create_file_detail(line_count, word_count, byte_count, ARGF.filename, false)
-    ARGF.close
-  end
-  file_details
 end
 
 def add_total_line(file_details)
