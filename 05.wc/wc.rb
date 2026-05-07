@@ -36,6 +36,7 @@ def parse_file_input
   file_details = []
   ARGV.each do |filename|
     next unless File.exist?(filename)
+    next if filename[0] == '-'
 
     if File.directory?(filename) || File.empty?(filename)
       file_details << create_file_detail(0, 0, 0, filename, File.directory?(filename))
