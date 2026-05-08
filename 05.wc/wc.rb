@@ -7,10 +7,24 @@ def main
   options = parse_options
   is_stdin = ARGV.empty?
   file_details = is_stdin ? parse_io_input : parse_file_input
+
   exit if file_details.empty?
-  added_total_file_details = add_total_line(file_details) if file_details.size > 1
-  adjusted_file_details = adjust_char_length(added_total_file_details || file_details, options, is_stdin)
-  output_lines = create_output_lines(adjusted_file_details, options)
+
+  if file_details.size > 1
+    total_line_count = file_details.flat_map { _1.values_at(:line_count) }.sum
+    total_word_count = file_details.flat_map { _1.values_at(:word_count) }.sum
+    total_byte_count = file_details.flat_map { _1.values_at(:byte_count) }.sum
+    file_details << create_file_detail(total_line_count, total_word_count, total_byte_count, '合計', false)
+  end
+
+  max_char_length = max_char_length(file_details, options, is_stdin)
+  file_details.each do |detail|
+    detail[:line_count] = detail[:line_count].to_s.rjust(max_char_length)
+    detail[:word_count] = detail[:word_count].to_s.rjust(max_char_length)
+    detail[:byte_count] = detail[:byte_count].to_s.rjust(max_char_length)
+  end
+
+  output_lines = create_output_lines(file_details, options)
   output(output_lines)
 end
 
@@ -64,25 +78,13 @@ def create_file_detail(line_count, word_count, byte_count, file_name, directory)
   }
 end
 
-def add_total_line(file_details)
-  total_line_count = file_details.flat_map { _1.values_at(:line_count) }.sum
-  total_word_count = file_details.flat_map { _1.values_at(:word_count) }.sum
-  total_byte_count = file_details.flat_map { _1.values_at(:byte_count) }.sum
-
-  added_total_file_details = Marshal.load(Marshal.dump(file_details))
-  added_total_file_details << create_file_detail(total_line_count, total_word_count, total_byte_count, '合計', false)
-end
-
-def adjust_char_length(file_details, options, is_stdin)
+def max_char_length(file_details, options, is_stdin)
   selectors = create_char_length_selectors(file_details, options)
-  max_length = file_details.flat_map { _1.values_at(*selectors) }.map { _1.to_s.length }.max
-  max_length = 7 if max_length < 7 && (file_details.any? { _1[:directory] } || (is_stdin && options.values_at(*%i[l w c]).count(true) > 1))
-
-  adjusted_file_details = Marshal.load(Marshal.dump(file_details))
-  adjusted_file_details.each do |detail|
-    detail[:line_count] = detail[:line_count].to_s.rjust(max_length)
-    detail[:word_count] = detail[:word_count].to_s.rjust(max_length)
-    detail[:byte_count] = detail[:byte_count].to_s.rjust(max_length)
+  max_char_length = file_details.flat_map { _1.values_at(*selectors) }.map { _1.to_s.length }.max
+  if max_char_length < 7 && (file_details.any? { _1[:directory] } || (is_stdin && options.values_at(*%i[l w c]).count(true) > 1))
+    7
+  else
+    max_char_length
   end
 end
 
