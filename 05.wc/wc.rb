@@ -6,7 +6,7 @@ require 'optparse'
 def main
   options = parse_options
   is_stdin = ARGV.empty?
-  file_details = is_stdin ? parse_io_input : parse_file_input
+  file_details = is_stdin ? parse_stdin_input : parse_file_input
 
   exit if file_details.empty?
 
@@ -39,7 +39,7 @@ def parse_options
   options
 end
 
-def parse_io_input
+def parse_stdin_input
   buf = ARGF.read
   return [create_file_detail(0, 0, 0, '', false)] if buf.empty?
 
