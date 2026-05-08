@@ -17,8 +17,7 @@ def main
     file_details << create_file_detail(total_line_count, total_word_count, total_byte_count, '合計', false)
   end
 
-  output_lines = create_output_lines(file_details, options, is_stdin)
-  output(output_lines)
+  puts create_output_lines(file_details, options, is_stdin)
 end
 
 def parse_options
@@ -101,11 +100,7 @@ def create_output_lines(file_details, options, is_stdin)
     output_lines << line
     output_lines << ["wc: #{detail[:file_name]}: ディレクトリです"] if detail[:directory]
   end
-  output_lines
-end
-
-def output(lines)
-  lines.each { |line| puts line.join(' ') }
+  output_lines.map { |line| line.join(' ') }
 end
 
 main
