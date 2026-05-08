@@ -17,14 +17,7 @@ def main
     file_details << create_file_detail(total_line_count, total_word_count, total_byte_count, '合計', false)
   end
 
-  max_char_length = max_char_length(file_details, options, is_stdin)
-  file_details.each do |detail|
-    detail[:line_count] = detail[:line_count].to_s.rjust(max_char_length)
-    detail[:word_count] = detail[:word_count].to_s.rjust(max_char_length)
-    detail[:byte_count] = detail[:byte_count].to_s.rjust(max_char_length)
-  end
-
-  output_lines = create_output_lines(file_details, options)
+  output_lines = create_output_lines(file_details, options, is_stdin)
   output(output_lines)
 end
 
@@ -96,13 +89,14 @@ def create_char_length_selectors(file_details, options)
   end
 end
 
-def create_output_lines(adjusted_file_details, options)
+def create_output_lines(file_details, options, is_stdin)
   output_lines = []
-  adjusted_file_details.each do |detail|
+  max_char_length = max_char_length(file_details, options, is_stdin)
+  file_details.each do |detail|
     line = []
-    line << detail[:line_count] if options[:l]
-    line << detail[:word_count] if options[:w]
-    line << detail[:byte_count] if options[:c]
+    line << detail[:line_count].to_s.rjust(max_char_length) if options[:l]
+    line << detail[:word_count].to_s.rjust(max_char_length) if options[:w]
+    line << detail[:byte_count].to_s.rjust(max_char_length) if options[:c]
     line << detail[:file_name]
     output_lines << line
     output_lines << ["wc: #{detail[:file_name]}: ディレクトリです"] if detail[:directory]
