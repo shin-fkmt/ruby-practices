@@ -92,7 +92,7 @@ def create_char_length_selectors(file_details, options)
   if file_details.size > 1 || (options.values_at(*%i[l w c]).count(true) > 1)
     %i[line_count word_count byte_count]
   else
-    { l: :line_count, w: :word_count, c: :byte_count }.values_at(*options.filter { _1 }.keys)
+    { l: :line_count, w: :word_count, c: :byte_count }.values_at(*options.keys)
   end
 end
 
