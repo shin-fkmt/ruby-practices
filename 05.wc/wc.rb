@@ -5,8 +5,7 @@ require 'optparse'
 
 def main
   options = parse_options
-  is_stdin = ARGV.empty?
-  file_details = is_stdin ? parse_stdin_input : parse_file_input
+  file_details = ARGV.empty? ? parse_stdin_input : parse_file_input
 
   exit if file_details.empty?
 
@@ -17,7 +16,7 @@ def main
     file_details << create_file_detail(total_line_count, total_word_count, total_byte_count, '合計', false)
   end
 
-  puts create_output_lines(file_details, options, is_stdin)
+  puts create_output_lines(file_details, options)
 end
 
 def parse_options
@@ -70,10 +69,10 @@ def create_file_detail(line_count, word_count, byte_count, file_name, directory)
   }
 end
 
-def max_char_length(file_details, options, is_stdin)
+def max_char_length(file_details, options)
   selectors = create_char_length_selectors(file_details, options)
   max_char_length = file_details.flat_map { _1.values_at(*selectors) }.map { _1.to_s.length }.max
-  if max_char_length < 7 && (file_details.any? { _1[:directory] } || (is_stdin && options.values_at(*%i[l w c]).count(true) > 1))
+  if max_char_length < 7 && (file_details.any? { _1[:directory] } || (ARGV.empty? && options.values_at(*%i[l w c]).count(true) > 1))
     7
   else
     max_char_length
@@ -88,9 +87,9 @@ def create_char_length_selectors(file_details, options)
   end
 end
 
-def create_output_lines(file_details, options, is_stdin)
+def create_output_lines(file_details, options)
   output_lines = []
-  max_char_length = max_char_length(file_details, options, is_stdin)
+  max_char_length = max_char_length(file_details, options)
   file_details.each do |detail|
     line = []
     line << detail[:line_count].to_s.rjust(max_char_length) if options[:l]
