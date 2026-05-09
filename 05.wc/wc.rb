@@ -56,7 +56,11 @@ def parse_file_input
 end
 
 def calculate_count(buf)
-  { line_count: buf.count("\n"), word_count: buf.split(' ').count, byte_count: buf.bytesize }
+  {
+    line_count: buf.count("\n"),
+    word_count: buf.split(' ').count,
+    byte_count: buf.bytesize
+  }
 end
 
 def create_file_detail(line_count, word_count, byte_count, filename, is_directory)
@@ -72,7 +76,8 @@ end
 def max_char_length(file_details, options)
   selectors = create_char_length_selectors(file_details, options)
   max_char_length = file_details.flat_map { _1.values_at(*selectors) }.map { _1.to_s.length }.max
-  if max_char_length < 7 && (file_details.any? { _1[:is_directory] } || (ARGV.empty? && options.values_at(*%i[l w c]).count(true) > 1))
+  if max_char_length < 7 &&
+     (file_details.any? { _1[:is_directory] } || (ARGV.empty? && options.values_at(*%i[l w c]).count(true) > 1))
     7
   else
     max_char_length
