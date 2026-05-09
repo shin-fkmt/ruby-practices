@@ -59,12 +59,12 @@ def calculate_count(buf)
   { line_count: buf.count("\n"), word_count: buf.split(' ').count, byte_count: buf.bytesize }
 end
 
-def create_file_detail(line_count, word_count, byte_count, file_name, is_directory)
+def create_file_detail(line_count, word_count, byte_count, filename, is_directory)
   {
     line_count: line_count,
     word_count: word_count,
     byte_count: byte_count,
-    file_name: file_name,
+    filename: filename,
     is_directory: is_directory
   }
 end
@@ -95,9 +95,9 @@ def create_output_lines(file_details, options)
     line << detail[:line_count].to_s.rjust(max_char_length) if options[:l]
     line << detail[:word_count].to_s.rjust(max_char_length) if options[:w]
     line << detail[:byte_count].to_s.rjust(max_char_length) if options[:c]
-    line << detail[:file_name]
+    line << detail[:filename]
     output_lines << line
-    output_lines << ["wc: #{detail[:file_name]}: ディレクトリです"] if detail[:is_directory]
+    output_lines << ["wc: #{detail[:filename]}: ディレクトリです"] if detail[:is_directory]
   end
   output_lines.map { |line| line.join(' ') }
 end
