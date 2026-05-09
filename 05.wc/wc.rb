@@ -59,20 +59,20 @@ def calculate_count(buf)
   { line_count: buf.count("\n"), word_count: buf.split(' ').count, byte_count: buf.bytesize }
 end
 
-def create_file_detail(line_count, word_count, byte_count, file_name, directory)
+def create_file_detail(line_count, word_count, byte_count, file_name, is_directory)
   {
     line_count: line_count,
     word_count: word_count,
     byte_count: byte_count,
     file_name: file_name,
-    directory: directory
+    is_directory: is_directory
   }
 end
 
 def max_char_length(file_details, options)
   selectors = create_char_length_selectors(file_details, options)
   max_char_length = file_details.flat_map { _1.values_at(*selectors) }.map { _1.to_s.length }.max
-  if max_char_length < 7 && (file_details.any? { _1[:directory] } || (ARGV.empty? && options.values_at(*%i[l w c]).count(true) > 1))
+  if max_char_length < 7 && (file_details.any? { _1[:is_directory] } || (ARGV.empty? && options.values_at(*%i[l w c]).count(true) > 1))
     7
   else
     max_char_length
@@ -97,7 +97,7 @@ def create_output_lines(file_details, options)
     line << detail[:byte_count].to_s.rjust(max_char_length) if options[:c]
     line << detail[:file_name]
     output_lines << line
-    output_lines << ["wc: #{detail[:file_name]}: ディレクトリです"] if detail[:directory]
+    output_lines << ["wc: #{detail[:file_name]}: ディレクトリです"] if detail[:is_directory]
   end
   output_lines.map { |line| line.join(' ') }
 end
