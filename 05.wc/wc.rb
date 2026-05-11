@@ -28,7 +28,7 @@ def parse_options
   opt.on('-w')
   opt.on('-c')
   opt.parse!(ARGV, into: options)
-  options = { l: true, w: true, c: true } unless options[:l] || options[:w] || options[:c]
+  options = { l: true, w: true, c: true } if options.count.zero?
   options
 end
 
