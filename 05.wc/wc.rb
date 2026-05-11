@@ -3,6 +3,8 @@
 
 require 'optparse'
 
+FIXED_ITEM_SIZE = 7
+
 def main
   options = parse_options
   file_details = ARGV.empty? ? parse_stdin_input : parse_file_input
@@ -76,9 +78,9 @@ end
 def max_char_length(file_details, options)
   selectors = create_char_length_selectors(file_details, options)
   max_char_length = file_details.flat_map { _1.values_at(*selectors) }.map { _1.to_s.length }.max
-  if max_char_length < 7 &&
+  if max_char_length < FIXED_ITEM_SIZE &&
      (file_details.any? { _1[:is_directory] } || (ARGV.empty? && options.values_at(*%i[l w c]).count(true) > 1))
-    7
+    FIXED_ITEM_SIZE
   else
     max_char_length
   end
